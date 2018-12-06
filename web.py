@@ -4,6 +4,7 @@ from flask import Flask, render_template, flash, request, redirect, url_for, sen
 from werkzeug.utils import secure_filename
 from testdata import TestData
 from data import Data
+from imagescan import Scanner
 
 UPLOAD_FOLDER = '/home/abhijitp/temp_files'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
@@ -46,10 +47,11 @@ def upload_file():
             return redirect(request.url)
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            file.save(os.path.join(os.getcwd(), 'files', filename))
+
             data = Data()
-            # TODO Call the extract function and set result in response
-            text = TestData.extract(filename)
+            scanner = Scanner()
+            text = scanner.extract(filename)
             data.set('Filename', filename)
             data.set('Extracted text', text)
             # return redirect(url_for('uploaded_file', filename=filename))
